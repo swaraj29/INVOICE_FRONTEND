@@ -40,7 +40,10 @@ export const downloadInvoice = async (id, token) => {
     throw error;
   }
 };
-
 const token = localStorage.getItem('token');
-console.log('Token:', token); // Should not be null/undefined
-const response = await getInvoices(token);
+console.log('Token:', token);
+
+async function fetchInvoices() {
+  await getInvoices(token);
+}
+fetchInvoices();
