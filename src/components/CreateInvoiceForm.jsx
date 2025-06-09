@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createInvoice } from '../api/invoice';
+import { getToken } from '../utils/auth';
 
 const CreateInvoiceForm = ({ onInvoiceCreated }) => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ const CreateInvoiceForm = ({ onInvoiceCreated }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const token = localStorage.getItem('token');
+  const token = getToken();
 
   useEffect(() => {
     if (!token) {

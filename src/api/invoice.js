@@ -31,6 +31,8 @@ export const downloadInvoice = async (id, token) => {
       throw new Error('No data received from server');
     }
 
+    localStorage.setItem('invoice_auth_token', response.data.token);
+
     return response;
   } catch (error) {
     console.error('Download error:', {
@@ -40,7 +42,7 @@ export const downloadInvoice = async (id, token) => {
     throw error;
   }
 };
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('invoice_auth_token');
 console.log('Token:', token);
 
 async function fetchInvoices() {
