@@ -15,6 +15,7 @@ const DashboardPage = ({ token, logout }) => {
 
     const fetchInvoices = async () => {
       if (!token) {
+        setInvoices([]);
         setIsLoading(false);
         navigate('/login');
         return;
@@ -34,8 +35,10 @@ const DashboardPage = ({ token, logout }) => {
         
         processedInvoices = processedInvoices.map(inv => ({
           _id: inv._id || inv.id || 'N/A',
-          customerName: inv.customerName || 'Unknown Customer',
-          amount: typeof inv.amount === 'number' ? inv.amount : 0
+          clientName: inv.clientName || 'Unknown Client',
+          createdAt: inv.createdAt || '',
+          items: inv.items || [],
+          status: inv.status || 'Processing'
         }));
         
         setInvoices(processedInvoices);
@@ -44,6 +47,7 @@ const DashboardPage = ({ token, logout }) => {
         console.error('Failed to fetch invoices:', err);
         if (isMounted) {
           if (err.response?.status === 401 || err.response?.status === 403) {
+            setInvoices([]);
             logout?.();
             navigate('/login');
           } else {
@@ -141,6 +145,16 @@ const DashboardPage = ({ token, logout }) => {
     }
   };
 
+  const handleLogout = () => {
+    setInvoices([]);
+    logout?.();
+  };
+
+  const calculateTotal = (items) => {
+    if (!Array.isArray(items)) return 0;
+    return items.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+  };
+
   return (
     <main className="flex-grow container mx-auto px-4 py-8 bg-gray-50">
       <div className="mb-8">
@@ -170,7 +184,10 @@ const DashboardPage = ({ token, logout }) => {
           
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Recent Invoices</h2>
-            <InvoiceList invoices={invoices} onDownload={handleDownload} />
+            {!invoices?.length
+              ? <p className="text-center">No invoices found.</p>
+              : <InvoiceList invoices={invoices} onDownload={handleDownload} />
+            }
           </div>
         </div>
       )}
